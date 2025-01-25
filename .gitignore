@@ -1,3 +1,4 @@
+assets
 /src/*.mod.c
 /src/*.o
 /src/*.ko
@@ -16,3 +17,4 @@
 /fs/sbin
 /fs/usr
 /fs/bin
+.gdbinit

@@ -1,21 +1,7 @@
 #!/bin/bash -e
 
-export KERNEL_VERSION=5.4
-export BUSYBOX_VERSION=1.32.0
-
-#
-# dependencies
-#
-echo "[+] Checking / installing dependencies..."
-sudo apt-get -q update
-sudo apt-get -q install -y bc bison flex libelf-dev cpio build-essential libssl-dev qemu-system-x86
-
-#
-# linux kernel
-#
-
 echo "[+] Downloading kernel..."
-wget -q -c https://mirrors.edge.kernel.org/pub/linux/kernel/v5.x/linux-$KERNEL_VERSION.tar.gz
+[ -e linux-$KERNEL_VERSION ] || wget -q -c https://mirrors.edge.kernel.org/pub/linux/kernel/v6.x/linux-$KERNEL_VERSION.tar.gz
 [ -e linux-$KERNEL_VERSION ] || tar xzf linux-$KERNEL_VERSION.tar.gz
 
 echo "[+] Building kernel..."
@@ -53,38 +39,4 @@ sed -i 'N;s/WARN("missing symbol table");\n\t\treturn -1;/\n\t\treturn 0;\n\t\t\
 
 sed -i 's/unsigned long __force_order/\/\/ unsigned long __force_order/g' linux-$KERNEL_VERSION/arch/x86/boot/compressed/pgtable_64.c
 
-make -C linux-$KERNEL_VERSION -j16 bzImage
-
-#
-# Busybox
-#
-
-echo "[+] Downloading busybox..."
-wget -q -c https://busybox.net/downloads/busybox-$BUSYBOX_VERSION.tar.bz2
-[ -e busybox-$BUSYBOX_VERSION ] || tar xjf busybox-$BUSYBOX_VERSION.tar.bz2
-
-echo "[+] Building busybox..."
-make -C busybox-$BUSYBOX_VERSION defconfig
-sed -i 's/# CONFIG_STATIC is not set/CONFIG_STATIC=y/g' busybox-$BUSYBOX_VERSION/.config
-make -C busybox-$BUSYBOX_VERSION -j16
-make -C busybox-$BUSYBOX_VERSION install
-
-#
-# filesystem
-#
-
-echo "[+] Building filesystem..."
-cd fs
-mkdir -p bin sbin etc proc sys usr/bin usr/sbin root home/ctf
-cd ..
-cp -a busybox-$BUSYBOX_VERSION/_install/* fs
-
-#
-# modules
-#
-
-echo "[+] Building modules..."
-cd src
-make
-cd ..
-cp src/*.ko fs/
+make -C linux-$KERNEL_VERSION -j16
