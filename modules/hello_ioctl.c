@@ -55,12 +55,12 @@ static long device_ioctl(struct file *filp, unsigned int ioctl_num, unsigned lon
 	return 0;
 }
 
-static struct proc_ops proc_ops = {
-	.proc_read = device_read,
-	.proc_write = device_write,
-	.proc_ioctl = device_ioctl,
-	.proc_open = device_open,
-	.proc_release = device_release};
+static struct file_operations fops = {
+	.read = device_read,
+	.write = device_write,
+	.unlocked_ioctl = device_ioctl,
+	.open = device_open,
+	.release = device_release};
 
 struct proc_dir_entry *proc_entry = NULL;
 
@@ -76,7 +76,7 @@ int init_module(void)
 	printk(KERN_ALERT "ioctl address: %#lx\b", (unsigned long)device_ioctl);
 	printk(KERN_ALERT "PWN_GET value: %#x\b", PWN_GET);
 	printk(KERN_ALERT "PWN_SET value: %#x\b", PWN_SET);
-	proc_entry = proc_create("pwn-college-ioctl", 0666, NULL, &proc_ops);
+	proc_entry = proc_create("pwn-college-ioctl", 0666, NULL, &fops);
 	return 0;
 }
 

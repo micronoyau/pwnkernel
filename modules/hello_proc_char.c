@@ -30,17 +30,17 @@ static ssize_t device_write(struct file *filp, const char *buf, size_t len, loff
 	return -EINVAL;
 }
 
-static struct proc_ops proc_ops = {
-	.proc_read = device_read,
-	.proc_write = device_write,
-	.proc_open = device_open,
-	.proc_release = device_release};
+static struct file_operations fops = {
+	.read = device_read,
+	.write = device_write,
+	.open = device_open,
+	.release = device_release};
 
 struct proc_dir_entry *proc_entry = NULL;
 
 int init_module(void)
 {
-	proc_entry = proc_create("pwn-college-char", 0666, NULL, &proc_ops);
+	proc_entry = proc_create("pwn-college-char", 0666, NULL, &fops);
 	printk(KERN_ALERT "/proc/pwn-college-char created!");
 	return 0;
 }

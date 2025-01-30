@@ -1,12 +1,20 @@
 # pwn.college helper environment for kernel development and exploitation
 
-Fixed for newer kernels (issues compiling older versions).
-Removed debian-based distros dependencies (to be done manually).
-Added small userspace program to start playing.
+## pwn.kernel fork
+
+Improvements compared to main project :
+ - Building is done in a container : no compilation problems on newer kernels
+ - Added small userspace programs to start playing.
 
 **NOTE: you don't need to interact with this repo in the course of interacting with pwn.college. The kernel challenges can be solved in the infrastructure; this is just here as a way to reproduce the infrastructure locally.**
 
-Pre-requistite:
+## Setup
+
+### Create docker image
+
+First, run `scripts/setup.sh` : this will build a docker image capable of building older kernels.
+
+### Build stuff
 
 Building the kernel, busybox, demo modules, filesystem (initramfs) and userspace programs :
 

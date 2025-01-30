@@ -1,6 +1,6 @@
 ROOT_DIR=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-KERNEL_VERSION=6.1.123
+KERNEL_VERSION=5.4
 BUSYBOX_VERSION=1.37.0
 ARCH=x86_64
 
@@ -31,14 +31,14 @@ run: kernel busybox modules userspace gdbinit fs
 kernel: $(KERNEL_VMLINUX)
 
 $(KERNEL_VMLINUX):
-	cd $(ASSETS_DIR) && KERNEL_VERSION=$(KERNEL_VERSION) $(SCRIPTS_DIR)/build-kernel.sh
+	KERNEL_VERSION=$(KERNEL_VERSION) $(SCRIPTS_DIR)/build-kernel.sh
 	echo "target remote :1234" > $(GDBINIT)
 	echo "file $(KERNEL_VMLINUX)" >> $(GDBINIT)
 
 busybox: $(BUSYBOX_OUT)
 
 $(BUSYBOX_OUT):
-	cd $(ASSETS_DIR) && BUSYBOX_VERSION=$(BUSYBOX_VERSION) $(SCRIPTS_DIR)/build-busybox.sh
+	BUSYBOX_VERSION=$(BUSYBOX_VERSION) $(SCRIPTS_DIR)/build-busybox.sh
 
 modules:
 	echo "[+] Building modules..."

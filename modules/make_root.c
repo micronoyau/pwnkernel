@@ -52,18 +52,18 @@ static long device_ioctl(struct file *filp, unsigned int ioctl_num, unsigned lon
 	return 0;
 }
 
-static struct proc_ops proc_ops = {
-	.proc_read = device_read,
-	.proc_write = device_write,
-	.proc_ioctl = device_ioctl,
-	.proc_open = device_open,
-	.proc_release = device_release};
+static struct file_operations fops = {
+	.read = device_read,
+	.write = device_write,
+	.unlocked_ioctl = device_ioctl,
+	.open = device_open,
+	.release = device_release};
 
 struct proc_dir_entry *proc_entry = NULL;
 
 int init_module(void)
 {
-	proc_entry = proc_create("pwn-college-root", 0666, NULL, &proc_ops);
+	proc_entry = proc_create("pwn-college-root", 0666, NULL, &fops);
 	return 0;
 }
 
